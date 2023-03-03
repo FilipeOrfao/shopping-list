@@ -24,12 +24,11 @@ addItemBtn.addEventListener("click", (e) => {
   itemList.appendChild(newLi);
 
   itemInput.value = "";
-
-  filter.classList.remove("hidden");
+  checkUI();
 });
 
 const i = document.querySelectorAll("i");
-const li = document.querySelectorAll("li");
+// const listItems = document.querySelectorAll("li");
 const removeButton = document.querySelectorAll("li button");
 const clearAllBtn = document.querySelector("#clear");
 
@@ -39,13 +38,47 @@ const clearAllBtn = document.querySelector("#clear");
 removeButton.forEach((i) =>
   i.addEventListener("click", (e) => {
     if (e.target.parentElement.classList.contains("remove-item")) {
-      e.target.parentElement.parentElement.remove();
+      if (confirm("Are you sure?")) {
+        e.target.parentElement.parentElement.remove();
+      }
     }
   })
 );
 
 // remove all items
 clearAllBtn.addEventListener("click", () => {
-  li.forEach((i) => i.remove());
-  filter.classList.add("hidden");
+  //   listItems.forEach((i) => i.remove());
+  if (confirm("Are you sure?")) {
+    while (itemList.firstChild) {
+      itemList.removeChild(itemList.firstChild);
+    }
+  }
+  checkUI();
 });
+
+// filter search
+filter.addEventListener("input", (e) => {
+  const listItems = document.querySelectorAll("li");
+  //   console.log(e.target.value);
+
+  listItems.forEach((i) => {
+    i.style.display = i.textContent.toLowerCase().includes(e.target.value.toLowerCase()) ? "" : "none";
+    // why does it not work when i add or remove class name????
+    // I don't know why adding and removing classes does not hide the items on the list, but changing the style.display to none works when the class does the same thing
+    // i.textContent.toLowerCase().includes(e.target.value.toLowerCase()) ? i.classList.remove("hidden") : i.classList.add("hidden");
+  });
+});
+
+// check ui
+function checkUI() {
+  const listItems = document.querySelectorAll("li");
+  if (listItems.length === 0) {
+    filter.classList.add("hidden");
+    clearAllBtn.classList.add("hidden");
+  } else {
+    filter.classList.remove("hidden");
+    clearAllBtn.classList.remove("hidden");
+  }
+}
+
+checkUI();
