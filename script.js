@@ -8,10 +8,21 @@ const filter = document.querySelector("#filter");
 addItemBtn.addEventListener("click", (e) => {
   e.preventDefault();
 
-  if (itemInput.value === "") return;
+  const newItem = itemInput.value;
 
+  if (newItem === "") return;
+
+  addItemToDom(newItem);
+
+  addItemToLocalTorage(newItem);
+
+  itemInput.value = "";
+  checkUI();
+});
+
+function addItemToDom(item) {
   const newLi = document.createElement("li");
-  newLi.textContent = itemInput.value;
+  newLi.textContent = item;
 
   const newButton = document.createElement("button");
   newButton.classList = "remove-item btn-link text-red";
@@ -22,28 +33,40 @@ addItemBtn.addEventListener("click", (e) => {
   newButton.appendChild(newIcon);
   newLi.appendChild(newButton);
   itemList.appendChild(newLi);
+}
 
-  itemInput.value = "";
-  checkUI();
-});
+function addItemToLocalTorage(item) {
+  let itemsFromLocalStorage;
+
+  if (localStorage.getItem("items") === null) {
+    itemsFromLocalStorage = [];
+  } else {
+    itemsFromLocalStorage = JSON.parse(localStorage.getItem("items"));
+  }
+
+  // adding new item to array
+  itemsFromLocalStorage.push(item);
+
+  // convert to JSON string and set to local storage
+  localStorage.setItem("items", JSON.stringify(itemsFromLocalStorage));
+}
 
 const i = document.querySelectorAll("i");
 // const listItems = document.querySelectorAll("li");
-const removeButton = document.querySelectorAll("li button");
+// const removeButton = document.querySelectorAll("li button");
 const clearAllBtn = document.querySelector("#clear");
 
 // remove selected item
 // i.forEach((i) => i.addEventListener("click", (e) => console.log(e.target.parentElement)));
 // removeButton.forEach((i) => i.addEventListener("click", (e) => console.log(e.target.parentElement.parentElement.remove)));
-removeButton.forEach((i) =>
-  i.addEventListener("click", (e) => {
-    if (e.target.parentElement.classList.contains("remove-item")) {
-      if (confirm("Are you sure?")) {
-        e.target.parentElement.parentElement.remove();
-      }
+itemList.addEventListener("click", (e) => {
+  if (e.target.parentElement.classList.contains("remove-item")) {
+    console.log(e.target);
+    if (confirm("Are you sure?")) {
+      e.target.parentElement.parentElement.remove();
     }
-  })
-);
+  }
+});
 
 // remove all items
 clearAllBtn.addEventListener("click", () => {
@@ -82,3 +105,8 @@ function checkUI() {
 }
 
 checkUI();
+
+// locaol storage
+// localStorage.setItem("name", "brad");
+// console.log(localStorage.getItem("name"));
+// localStorage.removeItem("name");
